@@ -28,9 +28,12 @@ async def get_user_info_and_redirect(access_token, next_url, request_session):
             # LOG.debug('Response %s', resp)
             if resp.status == 200:
                 user = await resp.json()
+                selected_keys = ['sub', 'email', 'name', 'preferred_username']
                 # Save and exit
                 LOG.info('user: %s', user)
-                request_session['user'] = user
+                user_selected = { key:user[key] for key in selected_keys if key in user }
+                LOG.info('user_selected: %s', user_selected)
+                request_session['user'] = user_selected
                 raise HTTPFound(next_url)
             else:
                 content = await resp.text()
