@@ -16,6 +16,8 @@ from aiohttp import ClientSession, BasicAuth, FormData
 
 LOG = logging.getLogger(__name__)
 
+OPEN = ["GiaB"]
+
 # Dummy permission database
 PERMISSIONS = {
     "john": ["GiaB", "dataset-registered", "dataset-controlled"],
@@ -88,7 +90,8 @@ async def permission(request):
 
     LOG.debug('requested datasets: %s', requested_datasets)
 
-    datasets = PERMISSIONS.get(username)
+    # default to OPEN datasets if no such user is explicitly authorized to anything
+    datasets = PERMISSIONS.get(username, OPEN)
     if requested_datasets:
         selected_datasets = set(requested_datasets).intersection(datasets)
     else:
